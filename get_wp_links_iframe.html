@@ -1,0 +1,61 @@
+<html>
+<head>
+
+</head>
+<body>
+
+	<!--div created for insert list of links-->
+	<div id = "listDiv"></div>
+	<iframe id = "myFrame" src="http://127.0.0.1/wordpress/2021/05/" referrerpolicy="no-referrer" width="1366px" height="768px"></iframe>
+	
+	<script>
+
+		function getLinks()
+		{
+			let listTemp=document.getElementById('myFrame').contentWindow.document.getElementsByClassName('entry-title')
+			let listFinal=[]
+			//add links to array listFinal
+			for(i=0;i<listTemp.length;i++)
+			{
+				if(listTemp[i].firstChild.hasAttribute('href'))
+				{
+					listFinal.push(listTemp[i].firstChild.getAttribute('href'))
+				}
+			}
+			//print link in console and on page for easier copying to clipboard
+			listFinal.forEach(function(link) {
+				let newItem = document.createElement('div')    
+				let textnode = document.createTextNode(link)
+				newItem.appendChild(textnode)             
+				let printList = document.getElementById('listDiv')
+				printList.insertBefore(newItem, printList.childNodes[0])
+				console.log(link)
+				
+			})
+		}
+
+		//try lower interval if there is no problem with saving all links
+		let linksInterval = setInterval(function(){
+			//check if it is last page
+			let checkLast = document.getElementById('myFrame').contentWindow.document.querySelector('.nav-links a.next')
+			//stop executing script if it is last page
+			if(!checkLast)
+			{
+				getLinks()
+				myStopFunction()
+			}
+			else
+			{
+				//get link and go to next page
+				getLinks()
+				document.getElementById('myFrame').contentWindow.document.getElementsByClassName('next')[0].click()
+			}			
+		},1000)	
+
+		function myStopFunction() {
+  			clearInterval(linksInterval);
+		}
+
+	</script>
+</body>
+</html>
